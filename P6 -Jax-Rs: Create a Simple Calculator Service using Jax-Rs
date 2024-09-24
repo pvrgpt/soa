@@ -1,0 +1,115 @@
+File: HelloWorld.java will have pre generated code add the highlighted part and test
+code:
+public HelloWorld() {
+    }
+
+    /**
+     * Retrieves representation of an instance of com.server.HelloWorld
+     * @return an instance of java.lang.String
+     */
+    @GET
+    @Produces("text/html")
+    public String getHtml() {
+        return " <body>Welcome </body>";
+        //throw new UnsupportedOperationException();
+}
+
+File: HelloWorld.java
+code:
+
+package com.server;
+
+
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.UriInfo;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.GET;
+import javax.ws.rs.Produces;
+import java.util.Calendar;
+import javax.ws.rs.QueryParam;
+
+/**
+ * REST Web Service
+ *
+ * @author Norbert
+ */
+@Path("helloworld")
+public class HelloWorld {
+
+    @Context
+    private UriInfo context;
+
+    /**
+     * Creates a new instance of HelloWorld
+     */
+    public HelloWorld() {
+    }
+
+    /**
+     * Retrieves representation of an instance of com.server.HelloWorld
+     * @return an instance of java.lang.String
+     */
+    @GET
+    @Produces("text/html")
+    public String getHtml() {
+        //TODO return proper representation object
+          return "<html> <body>" +Calendar.getInstance().getTime()+ "</body>";
+//throw new UnsupportedOperationException();
+    }
+     @GET
+    @Produces("text/html")
+    @Path("time")
+    public  String getTime(@QueryParam("name")String name){
+            
+            return "<html><body> Hello "+name+ "</body></html>";
+                    }
+    
+     @GET
+    @Path("add")
+    @Produces("text/html")
+    public String add(@QueryParam("a") int a, @QueryParam("b") int b){
+        
+       int sum = a+ b;
+    return "The sum is: "+ sum;
+    }
+   
+    @GET
+    @Path("sub")
+    @Produces("text/html")
+    public String sub(@QueryParam("a") int a, @QueryParam("b") int b){
+    int diff = a- b;
+    return "The difference is: "+ diff;
+    }
+   
+    @GET
+    @Path("mult")
+    @Produces("text/html")
+    public String mult(@QueryParam("a") int a, @QueryParam("b") int b){
+    int product = a* b;
+    return "The product is: "+ product;
+    }
+   
+    @GET
+    @Path("div")
+    @Produces("text/html")
+    public String div(@QueryParam("a") int a, @QueryParam("b") int b){
+    int divi = a/b;
+    return "The division is: "+ divi;
+    }
+
+
+
+
+    /**
+     * PUT method for updating or creating an instance of HelloWorld
+     * @param content representation for the resource
+     * @return an HTTP response with content of the updated or created resource.
+     */
+    @PUT
+    @Consumes("text/html")
+    public void putHtml(String content) {
+    }
+}
