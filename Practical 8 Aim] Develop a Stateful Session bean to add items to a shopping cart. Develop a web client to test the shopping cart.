@@ -1,0 +1,152 @@
+1.create a web app
+Java web > web app > name it CartStatefulEJB >check use dedicated checkbox > finish
+
+2. create stateful session bean 
+Right click on project >session bean > name it > select stateful and local 
+
+File: CartBeansLocal.java
+Code:
+package server;
+
+import javax.ejb.Local;
+import java.util.ArrayList;
+/**
+ *
+ * @author Norbert
+ */
+@Local
+public interface CartBeansLocal {
+      public void addItem(String item);
+    public ArrayList<String> getItems();
+    public void removeItem(String item); 
+
+}
+
+File: CartBeans.java
+code:
+package server;
+
+import javax.ejb.Stateful;
+import java.util.ArrayList;
+import javax.annotation.PostConstruct;
+
+
+/**
+ *
+ * @author Norbert
+ */
+@Stateful
+public class CartBeans implements CartBeansLocal {
+
+      private ArrayList<String> items;
+
+    @PostConstruct
+    public void initialize() {
+        items = new ArrayList<>();
+    }
+
+    @Override
+    public void addItem(String item) {
+        items.add(item);
+    }
+
+    @Override
+    public ArrayList<String> getItems() {
+        return items;
+    }
+    @Override
+    public void removeItem(String item) {
+        items.remove(item);
+    }
+
+}
+
+FIle: CartServlet.java
+Code:
+package server;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import javax.ejb.EJB;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+@WebServlet(name = "CartServlet", urlPatterns = {"/CartServlet"})
+public class CartServlet extends HttpServlet {
+
+    /**
+     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
+     * methods.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
+    @EJB CartBeansLocal cart;
+    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        response.setContentType("text/html;charset=UTF-8");
+        try (PrintWriter out = response.getWriter()) {
+            /* TODO output your page here. You may use following sample code. */
+            out.println("<!DOCTYPE html>");
+            out.println("<html>");
+            out.println("<head>");
+                     out.println("<title>Shopping CartServlet</title>");                   
+            out.println("</head>");
+            out.println("<body>");
+            
+            out.println("<br><b><i> adding items to cart</i></b>");
+            cart.addItem("Pizza");
+            cart.addItem("Cake");
+            cart.addItem("Chocolate");
+            cart.addItem("Pasta");
+            cart.addItem("Rice");
+            out.println(cart.getItems());
+            cart.removeItem("Cake");
+            cart.removeItem("Rice");         
+            out.println(cart.getItems());          
+            out.println("</body>");
+            out.println("</html>");
+       
+        }
+    }
+
+    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
+    /**
+     * Handles the HTTP <code>GET</code> method.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        processRequest(request, response);
+    }
+
+    /**
+     * Handles the HTTP <code>POST</code> method.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        processRequest(request, response);
+    }
+
+    @Override
+    public String getServletInfo() {
+        return "Short description";
+    }// </editor-fold>
+
+}
