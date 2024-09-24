@@ -1,0 +1,161 @@
+A part 
+Without database 
+A) Design a Mobile Bean as a Stateful EJB containing a variable
+representation modelname and 3 functions :
+setModelName : accepts a string parameter
+getPrice & getFeatures : don’t have any parameters but return types,
+Design a servlet that accepts mobile name from html page and shows price
+and features to user by accessing mobile bean
+
+File: BeanLocal.java 
+code:
+package server;
+
+import java.util.ArrayList;
+import javax.ejb.Local;
+
+@Local
+public interface BeanLocal {
+    public void setModelName(String Model);
+    public int getPrice();
+    public ArrayList<String> getFeatures();
+}
+
+File: Bean.java 
+code:
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package server;
+
+import java.util.ArrayList;
+import javax.annotation.PostConstruct;
+import javax.ejb.Stateful;
+
+/**
+ *
+ * @author Norbert
+ */
+@Stateful
+public class Bean implements BeanLocal {
+private String modelName;
+   
+    private ArrayList features;
+    
+    @PostConstruct
+    public void initialize(){
+        features = new ArrayList();
+        
+    }
+    @Override
+    public void setModelName(String model){
+      this.modelName = model;
+    }  
+    
+    @Override
+    public int getPrice(){
+        return 50000;
+    }
+    @Override
+    public ArrayList<String> getFeatures(){
+        features.add("Ram : 8gb");
+        features.add("storag : 128gb");
+        return features;
+    }
+    // Add business logic below. (Right-click in editor and choose
+    // "Insert Code > Add Business Method")
+}
+
+File: BeanServlet
+code:
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import javax.ejb.EJB;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import server.Bean;
+import server.BeanLocal;
+
+/**
+ *
+ * @author Norbert
+ */
+@WebServlet(urlPatterns = {"/BeanServlet"})
+public class BeanServlet extends HttpServlet {
+
+    /**
+     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
+     * methods.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
+    @EJB
+    private Bean mobile;
+    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        response.setContentType("text/html;charset=UTF-8");
+        try (PrintWriter out = response.getWriter()) {
+            /* TODO output your page here. You may use following sample code. */
+            out.println("<!DOCTYPE html>");
+            out.println("<html>");
+            out.println("<head>");
+            out.println("<title>Servlet BeanServlet</title>");            
+            out.println("</head>");
+            out.println("<body>");
+            
+            String model = request.getParameter("model");
+            mobile.setModelName(model);
+            out.println("model :" +model);
+            out.println("price :" +mobile.getPrice());
+            out.println("featu:" +mobile.getFeatures());
+           
+            out.println("</body>");
+            out.println("</html>");
+        }
+    }
+
+    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        processRequest(request, response);
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        processRequest(request, response);
+    }
+
+    
+    @Override
+    public String getServletInfo() {
+        return "Short description";
+    }// </editor-fold>
+
+}
+
+File: Index.html file 
+code:
+<html>
+    <head>
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <form action="BeanServlet" method="post">
+            <input type="text" name="model" placeholder="enter model name ">
+            <button type="submit" name="action" value="add">submit</button>
+        </form>
+    </body>
+</html>
