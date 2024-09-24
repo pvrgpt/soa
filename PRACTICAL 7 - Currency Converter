@@ -1,0 +1,129 @@
+file: ondex.html
+code:
+<html>
+    <head>
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <form method="GET" action="http://localhost:8080/Prac7/ConvertorServlet">
+            <label>enter amount</label><br><br>
+            <textarea></textarea><br><br>
+            <input type="button" value="reset"><br><br>
+            <input type ="button" value="submit"><br><br>
+        </form>
+    </body>
+</html>
+
+file: Convertorbean.java
+code:
+package server;
+
+
+import javax.ejb.Stateless;
+import java.math.BigDecimal;
+
+@Stateless
+public class ConvertorBean {
+ private BigDecimal  euroRate = new BigDecimal("0.0070");  /*business objects*/
+ private BigDecimal yenRate = new BigDecimal("115.31");
+ 
+/* business methods */
+ public BigDecimal dollarToYen(BigDecimal dollar){
+     BigDecimal result = dollar.multiply(yenRate);
+     return result.setScale(2,BigDecimal.ROUND_UP);
+     
+ }
+ 
+ public BigDecimal yenToDollar(BigDecimal yen){
+     BigDecimal result = yen.multiply(euroRate);
+     return result.setScale(2,BigDecimal.ROUND_UP);
+ }
+    
+}
+
+File: ConvertorServlet.java
+code:
+package server;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.math.BigDecimal;
+import javax.ejb.EJB;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+
+@WebServlet(name = "ConvertorServlet", urlPatterns = {"/ConvertorServlet"})
+public class ConvertorServlet extends HttpServlet {
+    @EJB ConvertorBean conv;
+
+  
+    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        response.setContentType("text/html;charset=UTF-8");
+        try (PrintWriter out = response.getWriter()) {
+            /* TODO output your page here. You may use following sample code. */
+            out.println("<!DOCTYPE html>");
+            out.println("<html>");
+            out.println("<head>");
+            out.println("<title>Servlet ConvertorServlet</title>");            
+            out.println("</head>");
+            out.println("<body>");
+            
+            String st = request.getParameter("textbox1");
+            int number = Integer.parseInt(st);
+            BigDecimal num = new BigDecimal(number);
+            out.println("<h2> Dollar to Yen :" +conv.dollarToYen(num)+"</h2>");
+            out.println("<h2> Dollar to Yen :" +conv.yenToDollar(num)+"</h2>");
+            
+            
+            out.println("</body>");
+            out.println("</html>");
+        }
+    }
+
+    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
+    /**
+     * Handles the HTTP <code>GET</code> method.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        processRequest(request, response);
+    }
+
+    /**
+     * Handles the HTTP <code>POST</code> method.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        processRequest(request, response);
+    }
+
+    /**
+     * Returns a short description of the servlet.
+     *
+     * @return a String containing servlet description
+     */
+    @Override
+    public String getServletInfo() {
+        return "Short description";
+    }// </editor-fold>
+
+}
