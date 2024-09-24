@@ -1,0 +1,86 @@
+File: Index.xhtml
+Code:
+<?xml version=&#39;1.0&#39; encoding=&#39;UTF-8&#39; ?>
+<!DOCTYPE html PUBLIC “-//W3C//DTD XHTML 1.0 Transitional//EN”
+“http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd”>
+<html xmlns=“http://www.w3.org/1999/xhtml”
+xmlns:h=“http://xmlns.jcp.org/jsf/html”>
+<h:head>
+<title>validation</title>
+</h:head>
+<h:body>
+<H3>add mobile details</H3>
+<h:form>
+<h:panelGrid columns=“3”>
+<h:outputLabel for =“ mname”>mobile name</h:outputLabel>
+<h:inputText id=“mname” required=“true” requiredMessage=“Mobile Name is
+mandatory”></h:inputText>
+<br />
+<h:outputLabel for=“color”>Color:</h:outputLabel>
+<h:inputText id=“color” required=“true” requiredMessage=“Color is
+mandatory”></h:inputText>
+<br />
+<h:outputLabel for=“model”>Model Number:</h:outputLabel>
+<h:inputText id=“model”
+required=“true”
+size=“4”
+disabled=“#{newJSFManagedBean.mno}”
+value=“${newJSFManagedBean.mno}”
+validator=“${newJSFManagedBean.validateModelNo}”
+requiredMessage=“Model number is mandatory”>
+</h:inputText>
+<br />
+<h:commandButton value=“Submit”></h:commandButton>
+</h:panelGrid>
+<!-- <h:commandButton value=“Second button” action=“open”>
+Second
+</h:commandButton>-->
+</h:form>
+</h:body>
+</html>
+
+File: Create new jsf managed bean 
+code:
+
+import java.io.Serializable;
+import javax.faces.application.FacesMessage;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.RequestScoped;
+import javax.faces.component.UIComponent;
+import javax.faces.context.FacesContext;
+import javax.faces.validator.FacesValidator;
+import javax.faces.validator.ValidatorException;
+
+/**
+ *s
+ * @author user42
+ */
+
+@ManagedBean
+@RequestScoped
+@FacesValidator("Mobile")
+public class NewJSFManagedBean implements Serializable {
+    
+    
+    private String mno;
+
+    public String getMno() {
+        return mno;
+    }
+
+    public void setMno(String mno) {
+        this.mno = mno;
+    }
+    public void validateModelNo(FacesContext fc, UIComponent uic, Object obj) throws ValidatorException {
+        String model = (String) obj;
+
+        if (model.length() < 4) {
+            FacesMessage msg = new FacesMessage("Minimum length of model number is 4");
+            msg.setSeverity(FacesMessage.SEVERITY_ERROR);
+            throw new ValidatorException(msg);
+        }  
+    }
+   
+   
+}
+
