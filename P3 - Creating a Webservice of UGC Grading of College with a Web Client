@@ -1,0 +1,94 @@
+File : getNaacRating method  in UGCService file  
+code:
+@WebMethod(operationName = "getNaacRating")
+    public Double getNaacRating(@WebParam(name = "collegeCode") String collegeCode) {
+        //TODO write your implementation code here:
+       if(collegeCode.equals("JHC")) { 
+ return 3.5;  
+ } else if(collegeCode.equals("KC")) { 
+ return 2.0; 
+ } else if(collegeCode.equals("HR")) {
+ return 3.0; 
+ } else { 
+ return 0.0;
+
+File: Code for interface
+UGCClientJava.java
+
+code:
+package ugcclient.java;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+
+public class UGCClientJava extends JFrame {
+    
+       public JTextField cname;
+       public JButton rate;
+       public JTextField rating;
+   
+public UGCClientJava() {
+        setTitle("UGCClient");
+        setSize(300, 200);
+         cname = new JTextField(10);
+        rate = new JButton("get Rating");
+        rating= new JTextField(10);
+        JPanel panel = new JPanel(new GridLayout(4, 1));
+        panel.add(new JLabel("Enter college name "));
+        panel.add(cname);
+        panel.add(rate);
+        panel.add(new JLabel("NAAC Grade"));
+        panel.add(rating);
+        add(panel);
+   rate.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                // Get collegcode from text field
+                String cc = cname.getText();
+                
+                Double ratee = getNaacRating(cc);
+                // Display rating in rating textfield
+                rating.setText(String.valueOf(ratee));
+            }
+        });
+        setVisible(true);
+       }
+
+ private static Double getNaacRating(java.lang.String collegeCode) {
+        server.UGCServics_Service service = new server.UGCServics_Service();
+        server.UGCServics port = service.getUGCServicsPort();
+        return port.getNaacRating(collegeCode);
+    }
+    public static void main(String[] args) {
+        // TODO code application logic here
+         SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                UGCClientJava calcClient = new UGCClientJava ();
+            }
+        });
+    }
+}
+
+file: UGCClient.java
+code:
+package ugcclient;
+
+public class UGCClient {
+
+    public static void main(String[] args) {
+        // TODO code application logic here
+        
+         java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new UGCJFrame().setVisible(true);
+            }
+        });
+    }
+
+    private static String getNaacRating(java.lang.String cname) {
+        server.UGCService_Service service = new server.UGCService_Service();
+        server.UGCService port = service.getUGCServicePort();
+        return port.getNaacRating(cname);
+    }
+    
+}
