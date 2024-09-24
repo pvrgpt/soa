@@ -1,0 +1,98 @@
+File: CalcClient.java – code for interface 
+code:
+package calcclient;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+
+public class CalcClient extends JFrame  {
+      public JTextField nf1;
+      public JTextField nf2;
+       public JButton addButton;
+       public JTextField resultField;
+       
+       public CalcClient() {
+        setTitle("CalcClient");
+        setSize(300, 200);
+       
+         nf1 = new JTextField(10);
+        nf2 = new JTextField(10);
+        addButton = new JButton("Add");
+        resultField= new JTextField(10);
+       
+       
+        JPanel panel = new JPanel(new GridLayout(4, 1));
+        panel.add(new JLabel("Number 1:"));
+        panel.add(nf1);
+        panel.add(new JLabel("Number 2:"));
+        panel.add(nf2);
+        panel.add(addButton);
+        panel.add(resultField);
+
+        add(panel);
+        addButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                // Get numbers from text fields
+                int num1 = Integer.parseInt(nf1.getText());
+                int num2 = Integer.parseInt(nf2.getText());
+
+                // Calculate result using add method
+                int result = add(num1, num2);
+
+                // Display result in resultField
+                resultField.setText(String.valueOf(result));
+            }
+        });
+        setVisible(true);
+       }
+
+
+
+    private static int add(int a, int b) {
+        server.CalWebService_Service service = new server.CalWebService_Service();
+        server.CalWebService port = service.getCalWebServicePort();
+        return port.add(a, b);
+    }
+    
+ public static void main(String[] args) {
+       SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                CalcClient calcClient = new CalcClient();
+            }
+        });
+     }
+    }
+
+File 2: CalClient.java
+code:
+
+package calclient;
+
+import server.CalJFrame;
+
+/**
+ *
+ * @author Norbert
+ */
+public class CalClient {
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) {
+        // TODO code application logic here
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new CalJFrame().setVisible(true);
+            }
+        });
+    }
+
+    private static int add(int a, int b) {
+        server.CalWeb_Service service = new server.CalWeb_Service();
+        server.CalWeb port = service.getCalWebPort();
+        return port.add(a, b);
+    }
+    
+}
